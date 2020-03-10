@@ -21,6 +21,7 @@ public class TProductService {
         if(a==1){
            throw new RuntimeException();
         }
+
         tProductMapper.insert(vo);
     }
 
