@@ -29,6 +29,7 @@ public class AlibabaController {
         vo.setProductName(name.equals("")?null:name);
         vo.setProductPrice(price);
         tProductService.add(vo,a);
+        System.out.println("daf");
         return "success";
 
     }
