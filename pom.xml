@@ -103,25 +103,6 @@
 
             </plugin>
 
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <buildArgs>
-                        <APP_NAME>${project.build.finalName}.jar</APP_NAME>
-                    </buildArgs>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                    <imageName>registry.cn-hangzhou.aliyuncs.com/alibabacloud-test:${app.version}</imageName>
-                    <dockerDirectory>../src/main/docker/resources</dockerDirectory>
-                </configuration>
-            </plugin>
         </plugins>
 
     </build>
