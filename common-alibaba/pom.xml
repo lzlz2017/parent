@@ -43,7 +43,7 @@
                     </resource>
                 </resources>
                 <imageName>registry.cn-hangzhou.aliyuncs.com/alibabacloud-test:${app.version}</imageName>
-                <dockerDirectory>../src/main/docker/resources</dockerDirectory>
+                <dockerDirectory>../src/main/resources</dockerDirectory>
             </configuration>
         </plugin>
     </plugins>
