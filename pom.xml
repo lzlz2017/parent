@@ -13,11 +13,14 @@
     </modules>
 
     <properties>
+        <app.version/>
+        <repo.url>registry.cn-hangzhou.aliyuncs.com/</repo.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>
         <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
+        <lomback.version>1.18.4</lomback.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -43,6 +46,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lomback.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -67,7 +75,16 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.62</version>
         </dependency>
     </dependencies>
 
@@ -85,7 +102,28 @@
                 </executions>
 
             </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <buildArgs>
+                        <APP_NAME>${project.build.finalName}.jar</APP_NAME>
+                    </buildArgs>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                    <imageName>registry.cn-hangzhou.aliyuncs.com/alibabacloud-test:${app.version}</imageName>
+                    <dockerDirectory>../src/main/docker/resources</dockerDirectory>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>
