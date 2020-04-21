@@ -22,9 +22,14 @@ public class AlibabaController {
 
     @GetMapping("product/query")
     public Object getProduct(){
-        return tProductService.getProduct();
+       Object obj= tProductService.getProduct();
+        return "大叔叔";
+
     }
 
+    private int a(){
+        return 0;
+    }
     @PostMapping("add")
     public Object addProduct(String name,Double price,Integer a){
         TProduct vo=new TProduct();
