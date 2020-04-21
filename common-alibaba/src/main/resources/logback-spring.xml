@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!--应用名称 -->
+  <property name="appName" value="alibabacloud"></property>
+  <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+  <property  name="LOG_PATH" value="/Users/linzhong/Desktop/buket"/>
+  <!--日志格式-->
+   <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+  <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+  <!--引入默认的一些设置-->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <logger name="cn.alibaba.cloud" level="DEBUG"/>
+  <jmxConfigurator/>
+
+  <!--写入日志到控制台的appender,用默认的,但是要去掉charset,否则windows下tomcat下乱码-->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+  <!--写入日志到文件的appender-->
+  <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH}/${appName}/logs/${appName}.log</file>
+    <!-- 设置滚动策略 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!--日志文件输出的文件名,每天一个文件-->
+      <fileNamePattern>${LOG_PATH}/${appName}/logs/${appName}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- keep 60 days worth of history -->
+      <maxHistory>60</maxHistory>
+      <maxFileSize>100MB</maxFileSize>
+      <totalSizeCap>20GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!--warn级别以上的文件appender-->
+  <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH}/${appName}/logs/${appName}-error.log</file>
+    <!-- 设置滚动策略 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!--日志文件输出的文件名,每天一个文件-->
+      <fileNamePattern>${LOG_PATH}/${appName}/logs/${appName}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+      <maxHistory>60</maxHistory>
+    </rollingPolicy>
+    <!-- 按照日志级别进行过滤 -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <!-- 收集WARN及WARN以上级别的日志 -->
+      <level>WARN</level>
+    </filter>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!--异步到文件-->
+  <appender name="asyncFileAppender" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>500</queueSize>
+    <appender-ref ref="fileAppender"/>
+  </appender>
+  <!--异步到文件-->
+  <appender name="asyncErrorAppender" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>500</queueSize>
+    <appender-ref ref="errorAppender"/>
+  </appender>
+
+
+  <!--默认环境:打印控制台-->
+  <springProfile name="default">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- 打印sql -->
+    <root level="INFO" >
+	    <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="asyncFileAppender"/>
+        <appender-ref ref="asyncErrorAppender"/>
+    </root>
+  </springProfile>
+
+  <!--开发环境:打印控制台-->
+  <springProfile name="dev">
+    <!--代码着色-->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- 打印sql -->
+    <logger name="cn.alibaba.cloud" level="DEBUG"/>
+    <root level="INFO">
+	    <appender-ref ref="asyncFileAppender"/>
+	    <appender-ref ref="asyncErrorAppender"/>
+	    <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!--预发环境:打印控制台和输出到文件-->
+  <springProfile name="inte">
+    <!-- 打印sql -->
+    <logger name="cn.alibaba.cloud" level="DEBUG"/>
+    <root level="INFO">
+      <appender-ref ref="asyncFileAppender"/>
+      <appender-ref ref="asyncErrorAppender"/>
+	  <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+  <!--生产环境:打印控制台和输出到文件-->
+  <springProfile name="pro">
+  	<logger name="com.fenla" level="DEBUG"/>
+    <root level="INFO">
+      <appender-ref ref="asyncFileAppender"/>
+      <appender-ref ref="asyncErrorAppender"/>
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+</configuration>
