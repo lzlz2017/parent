@@ -6,7 +6,7 @@ spring:
       access-key: rr
       secret-key: rr
       oss:
-        endpoint: oss-cn-shenzhen.aliyuncs.com
+        endpoint:
   datasource:
     username: root
     password: 20200120
